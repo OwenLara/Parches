@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Click para pintar</title>
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+    h3 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .color-box {
+        display: flex;
+        justify-content: space-between;
+        width: 90vw;
+        max-width: 300px;
+        margin-bottom: 20px;
+    }
+    .color-patch {
+        width: 30px;
+        height: 30px;
+        border: 1px solid black;
+        cursor: pointer;
+    }
+    .border-red {
+        border-color: red;
+    }
+    #countdown {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+<body>
+
+<h3>Serás capaz de hacer que los colores coincidan antes de que acabe el tiempo?</h3>
+
+<div id="countdown">Cronómetro: <span id="timer">03:00</span></div>
+
+<div class="color-box" id="colorBox1">
+    <div class="color-patch" id="colorPatch1"></div>
+    <div class="color-patch" id="colorPatch2"></div>
+    <div class="color-patch" id="colorPatch3"></div>
+    <div class="color-patch" id="colorPatch4"></div>
+</div>
+
+<div class="color-box" id="colorBox2">
+    <div class="color-patch" id="patch1"></div>
+    <div class="color-patch" id="patch2"></div>
+    <div class="color-patch" id="patch3"></div>
+    <div class="color-patch" id="patch4"></div>
+</div>
+
+<script>
+    const colorBoxes = document.querySelectorAll('.color-box');
+    const upperPatches = document.querySelectorAll('#colorBox1 .color-patch');
+    const lowerPatches = document.querySelectorAll('#colorBox2 .color-patch');
+    const timerDisplay = document.getElementById('timer');
+
+    let timerSeconds = 180;
+
+    // Función para generar un color aleatorio en formato hexadecimal
+    function getRandomColor() {
+        return "#" + Math.floor(Math.random() * 16777215).toString(16);
+    }
+
+    // Generar colores aleatorios para las casillas superiores
+    upperPatches.forEach((patch) => {
+        const randomColor = getRandomColor();
+        patch.style.backgroundColor = randomColor;
+    });
+
+    // Evento de clic para las casillas inferiores
+    lowerPatches.forEach((patch, index) => {
+        patch.addEventListener('click', () => {
+            const upperPatchColor = upperPatches[index].style.backgroundColor;
+            const currentColor = patch.style.backgroundColor;
+            if (currentColor !== upperPatchColor) {
+                const newColor = getRandomColor();
+                patch.style.backgroundColor = newColor;
+            } else {
+                patch.classList.add('border-red');
+                patch.style.cursor = 'not-allowed';
+                patch.removeEventListener('click');
+                if (document.querySelectorAll('.border-red').length === 4) {
+                    alert("¡Ganaste Ya era hora!");
+                } else {
+                    const alertMessages = ["¡Tiempo acabado Eres muy malo.", "Acaso no puedes!", "Aun sigues; Paque si no puedes"];
+                    const randomAlert = alertMessages[Math.floor(Math.random() * alertMessages.length)];
+                    alert(randomAlert);
+                    const restart = confirm("¿Quieres reiniciar para poder jugar de nuevo?");
+                    if (restart) {
+                        window.location.reload();
+                    }
+                }
+            }
+        });
+    });
+
+    // Función para actualizar el cronómetro
+    function updateTimer() {
+        const minutes = Math.floor(timerSeconds / 60);
+        let seconds = timerSeconds % 60;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        timerDisplay.textContent = `${minutes}:${seconds}`;
+    }
+
+    // Iniciar el cronómetro
+    const countdown = setInterval(() => {
+        timerSeconds--;
+        updateTimer();
+        if (timerSeconds === 0) {
+            clearInterval(countdown);
+            const alertMessages = ["¡Tiempo acabado! Eres muy malo.", "Lucer sigue intentando!"];
+            const randomAlert = alertMessages[Math.floor(Math.random() * alertMessages.length)];
+            alert(randomAlert);
+            const restart = confirm("¿Quieres reiniciar para poder jugar de nuevo?");
+            if (restart) {
+                window.location.reload();
+            }
+        }
+    }, 1000);
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
